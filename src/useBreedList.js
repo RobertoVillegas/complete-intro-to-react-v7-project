@@ -20,7 +20,7 @@ export default function useBreedList(animal) {
       setStatus("loading");
 
       const res = await fetch(
-        `https://pets-v2.dev-apis.com/breeds?animal=${animal}`
+        `http://pets-v2.dev-apis.com/breeds?animal=${animal}`
       );
 
       const json = await res.json();
