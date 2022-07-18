@@ -11,15 +11,17 @@ const SearchParams = () => {
   const [breed, setBreed] = useState("");
   const [breeds] = useBreedList(animal);
   const [pets, setPets] = useState([]);
+  const [page, setPage] = useState(0);
+  const [hasNextPage, setHasNextPage] = useState(false);
   const [theme, setTheme] = useContext(ThemeContext);
 
   useEffect(() => {
     requestPets();
-  }, []); //eslint-disable-line react-hooks/exhaustive-deps
+  }, [page]); //eslint-disable-line react-hooks/exhaustive-deps
 
   async function requestPets() {
     const res = await fetch(
-      `http://pets-v2.dev-apis.com/pets?animal=${animal}&location=${location}&breed=${breed}`
+      `http://pets-v2.dev-apis.com/pets?animal=${animal}&location=${location}&breed=${breed}&page=${page}`
     );
 
     const json = await res.json();
@@ -27,7 +29,16 @@ const SearchParams = () => {
     console.log(json);
 
     setPets(json.pets);
+    setHasNextPage(json.hasNext);
   }
+
+  const nextPage = () => {
+    setPage(page + 1);
+  };
+
+  const prevPage = () => {
+    setPage(page - 1);
+  };
 
   return (
     <div className="search-params">
@@ -105,6 +116,11 @@ const SearchParams = () => {
         </select>
         <button style={{ backgroundColor: theme }}>Submit</button>
       </form>
+      <div>
+        {!!page && <button onClick={prevPage}>Previous Page</button>}
+        <p>Current page: {page}</p>
+        {hasNextPage && <button onClick={nextPage}>Next Page</button>}
+      </div>
       <Results pets={pets} />
     </div>
   );
